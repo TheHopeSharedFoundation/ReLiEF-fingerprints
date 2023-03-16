@@ -1,0 +1,17 @@
+name: CADD-environment
+channels:
+    - conda-forge
+    - tmap
+
+dependencies:
+    - python>=3.6
+    - pip
+    - jupyterlab
+    - tmap
+    - faerun
+    - mhfp
+    - jupyter_contrib_nbextensions
+    - pip:
+      - pandas
+      - plotly==5.13.1
+
