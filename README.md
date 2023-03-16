@@ -1,7 +1,7 @@
 # ReLiEF-fingerprints
 Receptor-Ligand intErFace (ReLiEF) fingerprints for the encoding of molecular surfaces, interfaces, and cavities
 
-Click on the following Binder button to explore a TMAP and heatmap visualization of ReLiEF fingerprints generated for Abl protein kinase: 
+Click on the following Binder button to explore a TMAP tree-based heatmap visualization of ReLiEF fingerprints generated for Abl protein kinase: 
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://hub.gke2.mybinder.org/user/thehopesharedfo-ef-fingerprints-9vsipcdb/doc/workspaces/auto-p/tree/ReLiEF_Fingerprints_Abl_ProteinKinaseConformations_Heatmap.ipynb)
 
