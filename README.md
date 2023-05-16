@@ -1,5 +1,7 @@
 # ReLiEF fingerprints
-Receptor Ligand surfacE Feature (ReLiEF) fingerprints for encoding molecular structure and physicochemical properties
+Receptor Ligand surfacE Feature (ReLiEF) fingerprints for encoding molecular structure and physicochemical properties.  This video describes the use of ReLiEF fingerprints and TMAP (https://tmap.gdb.tools/) to cluster and visualize the similarity of Abl kinase conformations: https://www.youtube.com/watch?v=2tnHeRlLt7Y  
+
+
 Click on the following Binder button to explore a TMAP tree-based heatmap visualization of ReLiEF fingerprints generated for Abl protein kinase: 
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/TheHopeSharedFoundation/ReLiEF-fingerprints/HEAD)
