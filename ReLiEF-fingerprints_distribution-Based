@@ -1,0 +1,142 @@
+################################################
+# Copyright 2023 Benjamin M. Samudio
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Ben Samudio, May 2023
+# Towards Alleviating Suffering
+###############################################
+import re
+import math
+import statistics
+import os
+
+path = "/Users/benjaminsamudio/"
+os.chdir(path)
+test_surface_file = path + "Test_5seoA_Dots_SurfaceQuality_0_NoStickRepresentation.wrl"
+
+rgb_distribution_array = []
+def number_to_alphabet (number):
+        """"This function replaces numerical values with alphabetic ones"""
+        number_string = str(number)
+        number_string = number_string.replace("0","a")
+        number_string = number_string.replace("1", "b")
+        number_string = number_string.replace("2", "c")
+        number_string = number_string.replace("3", "d")
+        number_string = number_string.replace("4", "e")
+        number_string = number_string.replace("5", "f")
+        number_string = number_string.replace("6", "g")
+        number_string = number_string.replace("7", "h")
+        number_string = number_string.replace("8", "i")
+        number_string = number_string.replace("9", "j")
+        return number_string
+
+############################################################################################### Section 1 of 3: Create the RGB binner
+# The RGB values from the *.wrl file are fractions of one.
+rbg_maximum_size = 256 #<-------------------------------- The maximum number of rbg increments, including zero
+maximum_number_bins = rbg_maximum_size * 3 #<------------- rbg_maximum_size is multiplied by 3 because we are going from the color blue to red
+bin_increment = 1 / rbg_maximum_size
+rgb_original_count = 0
+for rbg_bin_index in range(1,maximum_number_bins):  #<------------------------------------ Note that this count starts at 1.  This means toggles will occur at factors of 256.
+        if rbg_bin_index == 1:
+                rgb_red_bottom = 0
+                rgb_green_bottom = 0
+                rgb_blue_bottom = 1 - bin_increment
+                rgb_red_top = bin_increment
+                rgb_green_top = bin_increment
+                rgb_blue_top = 1
+                bin_identifier = "PC&" + number_to_alphabet(rbg_bin_index)
+                print(rbg_bin_index,rgb_red_bottom,rgb_green_bottom,rgb_blue_bottom,rgb_red_top,rgb_green_top,rgb_blue_top,bin_identifier,rgb_original_count)
+                rgb_temporary_array = []
+                rgb_temporary_array = [rbg_bin_index,rgb_red_bottom,rgb_green_bottom,rgb_blue_bottom,rgb_red_top,rgb_green_top,rgb_blue_top,bin_identifier,rgb_original_count]
+                rgb_distribution_array.append(rgb_temporary_array)
+        if rbg_bin_index > 1 and rbg_bin_index <= rbg_maximum_size:
+                rgb_blue_top -= bin_increment
+                rgb_blue_bottom -= bin_increment
+                rgb_green_top += bin_increment
+                rgb_green_bottom += bin_increment
+                bin_identifier = "PC&" + number_to_alphabet(rbg_bin_index)
+                print(rbg_bin_index,rgb_red_bottom, rgb_green_bottom, rgb_blue_bottom, rgb_red_top, rgb_green_top, rgb_blue_top,bin_identifier,rgb_original_count)
+                rgb_temporary_array = []
+                rgb_temporary_array = [rbg_bin_index, rgb_red_bottom, rgb_green_bottom, rgb_blue_bottom, rgb_red_top, rgb_green_top, rgb_blue_top, bin_identifier, rgb_original_count]
+                rgb_distribution_array.append(rgb_temporary_array)
+        if rbg_bin_index >= rbg_maximum_size + 1 and rbg_bin_index < (rbg_maximum_size * 2) + 1:
+                rgb_red_top += bin_increment
+                rgb_red_bottom += bin_increment
+                bin_identifier = "PC&" + number_to_alphabet(rbg_bin_index)
+                print(rbg_bin_index,rgb_red_bottom, rgb_green_bottom, rgb_blue_bottom, rgb_red_top, rgb_green_top, rgb_blue_top,bin_identifier, rgb_original_count)
+                rgb_temporary_array = []
+                rgb_temporary_array = [rbg_bin_index, rgb_red_bottom, rgb_green_bottom, rgb_blue_bottom, rgb_red_top, rgb_green_top, rgb_blue_top, bin_identifier, rgb_original_count]
+                rgb_distribution_array.append(rgb_temporary_array)
+        if rbg_bin_index >= (rbg_maximum_size * 2) + 1:
+                rgb_green_top -= bin_increment
+                rgb_green_bottom -= bin_increment
+                bin_identifier = "PC&" + number_to_alphabet(rbg_bin_index)
+                print(rbg_bin_index, rgb_red_bottom, rgb_green_bottom, rgb_blue_bottom, rgb_red_top, rgb_green_top, rgb_blue_top, bin_identifier, rgb_original_count)
+                rgb_temporary_array = []
+                rgb_temporary_array = [rbg_bin_index, rgb_red_bottom, rgb_green_bottom, rgb_blue_bottom, rgb_red_top, rgb_green_top, rgb_blue_top, bin_identifier, rgb_original_count]
+                rgb_distribution_array.append(rgb_temporary_array)
+
+############################################################################################### Section 2 of 3: Extract the coordinates and colors of each surface dot.  Convert the colors to an alphabetic code.  Collect all values into: surface_all_dot_values.
+# Example string for coordinates from *.wrl file: translation 2.819419 0.448916 -1.255814
+# Example string for colors from *.wrl file: material Material { diffuseColor 0.0000 0.0624 1.0000
+
+test_surface_file = path + "Test_5seoA_Dots_SurfaceQuality_0_NoStickRepresentation.wrl"
+
+rgb_distribution_array_size = len(rgb_distribution_array)
+
+with open(test_surface_file) as file_object:
+        for wrl_file_row in file_object: #<-------------------------------------------------- Open a *.wrl file.  This file should only cotain spheres (dots), their translations, and their colors
+                surface_dot_coordinates = []
+                surface_dot_colors = []
+                surface_dot_start = []
+                surface_dot_end = []
+                surface_dot_coordinates = re.search(r"translation\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)",wrl_file_row) #<---------------------- Extract dot translation coordinates
+                surface_dot_colors = re.search(r"diffuseColor\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)",wrl_file_row) #<-------------------------- Extract dot color
+                surface_dot_start = re.search(r"Transform",wrl_file_row) #<--------------------------------------------------------------------------- Extract the indicator of the START of a new dot block in the *.wrl file
+                surface_dot_end = re.search(r"shininess",wrl_file_row) #<----------------------------------------------------------------------------- Extract the indicator of the END of a new dot block in the *.wrl file
+                if surface_dot_start: #<------------------------------------------- Initiate arrays upon finding a new dot block
+                        new_dot_flag = 1
+                        surface_single_dot_values = []
+                if surface_dot_end:
+                        new_dot_flag = 0
+                if surface_dot_coordinates and new_dot_flag == 1: #<-------------------------------------- These are the dot coordinates (translations) from the *.wrl file.  They're only used for calculating distances.
+                        surface_single_dot_values.append(float(surface_dot_coordinates.group(1)))
+                        surface_single_dot_values.append(float(surface_dot_coordinates.group(2)))
+                        surface_single_dot_values.append(float(surface_dot_coordinates.group(3)))
+                if surface_dot_colors and new_dot_flag == 1: #<-------------------------------------------- These are the RGB values (fractions of 255) from the *.wrl file.
+                        first_color_value = 0
+                        second_color_value = 0
+                        third_color_value = 0
+                        first_color_value = float(surface_dot_colors.group(1))
+                        second_color_value = float(surface_dot_colors.group(2))
+                        third_color_value = float(surface_dot_colors.group(3))
+                        for rgb_bin_count in range(0,rgb_distribution_array_size):
+                                if first_color_value >= rgb_distribution_array[rgb_bin_count][1] and first_color_value <= rgb_distribution_array[rgb_bin_count][4] and second_color_value >= rgb_distribution_array[rgb_bin_count][2] and second_color_value <= rgb_distribution_array[rgb_bin_count][5] and third_color_value >= rgb_distribution_array[rgb_bin_count][3] and third_color_value <= rgb_distribution_array[rgb_bin_count][6]:
+                                        rgb_distribution_array[rgb_bin_count][8] += 1
+
+############################################################################################### Section 3 of 3: Create fingerprints
+output_fingerprint_string = ""
+total_number_bits = 0
+for x in range(0,rgb_distribution_array_size):
+        if rgb_distribution_array[x][8] != 0:
+                total_number_bits = total_number_bits + rgb_distribution_array[x][8]
+                rgb_bin_instance = 0
+                for y in range(0,rgb_distribution_array[x][8]):
+                        rgb_bin_instance += 1
+                        output_fingerprint_string = output_fingerprint_string + rgb_distribution_array[x][7] + "&" + str(rgb_bin_instance) + " "
+
+print(output_fingerprint_string)
+
+print(total_number_bits)
+
