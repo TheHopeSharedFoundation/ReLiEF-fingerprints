@@ -16,7 +16,7 @@ In contrast to sb-ReLiEF, distribution-based ReLiEF fingerprints (db-ReLiEF) do 
 
 A TMAP minimum-spanning tree was created from the db-ReLiEF fingerprints generated for the 77 PDE-10 cocrystallized ligands, and is shown here:
 
-
+![Distribution-Based-ReLiEF-Fingerprints_TMAP-results](https://github.com/TheHopeSharedFoundation/ReLiEF-fingerprints/assets/7951822/1b7c110a-d397-4b46-8ef5-9dcccb5ce4c4)
 
 Panel A highlights a series of ligands that increase in potency (points a through d), Panel B shows a juncture in the TMAP minimum-spanning tree (points e through g), and Panel C focuses on a set of especially potent ligands (points h through m).
 
