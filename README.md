@@ -19,6 +19,8 @@ A TMAP minimum-spanning tree was created from the db-ReLiEF fingerprints generat
 
 ![Distribution-Based-ReLiEF-Fingerprints_TMAP-results](https://github.com/TheHopeSharedFoundation/ReLiEF-fingerprints/assets/7951822/7fd0f09e-65e0-411f-908c-cda5b672c5e6)
 
+Panel A highlights a series of ligands that increase in potency (points a through d), Panel B shows a juncture in the TMAP minimum-spanning tree (points e through g), and Panel C focuses on a set of especially potent ligands (points h through m).
+
 ![Screen Shot 2023-05-30 at 9 02 44 AM](https://github.com/TheHopeSharedFoundation/ReLiEF-fingerprints/assets/7951822/fe4200a3-d66d-41d3-9c5b-64083dae16b1)
 
 This is a repository and collection of work by the Hope Shared Foundation, an all-volunteer 501(c)(3) not-for-profit dedicated to empowering students, citizen-scientists, and researchers to contribute to open-access biomedical research and innovation.  All work in this repository is licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
