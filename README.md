@@ -1,5 +1,5 @@
 # ReLiEF fingerprints
-![image](https://github.com/TheHopeSharedFoundation/ReLiEF-fingerprints/assets/7951822/35210b2c-91ce-4ae7-8464-e6c58492705c)
+                                                                          ![image](https://github.com/TheHopeSharedFoundation/ReLiEF-fingerprints/assets/7951822/35210b2c-91ce-4ae7-8464-e6c58492705c)
 
 Receptor Ligand surfacE Feature (ReLiEF) fingerprints for encoding molecular structure and physicochemical properties.  Essentially, ReLiEF fingerprints are generated from a molecular surface that is colored by a particular property, such as partial charge.  From the surface and color, fingerprints are generated.  These are physicochemical 3D-based fingerprints and can be used in a variety of applications such as similarity clustering, machine learning, and pharmacophore generation.  
 
