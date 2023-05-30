@@ -13,11 +13,11 @@ In segmentation-based ReLiEF fingerprints (sb-ReLiEF), the molecule is first ori
 In contrast to sb-ReLiEF, distribution-based ReLiEF fingerprints (db-ReLiEF) do not depend on molecular orientation or position.  In db-ReLiEF, the surface of the molecule is first represented as a dot-surface (discrete surface) colored by a particular property and captured in a VRML file.  The dots representing the surface are then binned according to their color.  For each color bin, the property that the color represents and the sequence of dot addition to the bin (index/instance) are recorded with each dot, and this represents a fingerprint bit.  This binning process results in a distribution of the physicochemical 3D-based property represented by the color.  This process can be repeated for multiple properties, generating a distribution for each property.  For each property distribution and each bin, the fingerprint bits are concatenated in order of dot index into a fingerprint.  In this way, the fingerprint captures the distributions of multiple properties simultaneously, such as partial charge, distance from the center of mass, and functional group.  This schematic describes the process of creating db-ReLiEF fingerprints based on the partial charges of PDE-10 cocrystallized ligands (from [DOI:10.1007/s10822-022-00478-x](https://pubmed.ncbi.nlm.nih.gov/36153472/)):        
 
 
-![Distribution-Based-ReLiEF-Fingerprint-Generation-Process](https://github.com/TheHopeSharedFoundation/ReLiEF-fingerprints/assets/7951822/584dd643-2bd0-414b-804b-0ff70181f7c2)
+
 
 A TMAP minimum-spanning tree was created from the db-ReLiEF fingerprints generated for the 77 PDE-10 cocrystallized ligands, and is shown here:
 
-![Distribution-Based-ReLiEF-Fingerprints_TMAP-results](https://github.com/TheHopeSharedFoundation/ReLiEF-fingerprints/assets/7951822/7fd0f09e-65e0-411f-908c-cda5b672c5e6)
+
 
 Panel A highlights a series of ligands that increase in potency (points a through d), Panel B shows a juncture in the TMAP minimum-spanning tree (points e through g), and Panel C focuses on a set of especially potent ligands (points h through m).
 
