@@ -10,5 +10,6 @@ dependencies:
     - faerun
     - mhfp
     - jupyter_contrib_nbextensions
-    - pip
+    - pip:
+        - pandas
 
