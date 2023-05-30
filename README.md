@@ -2,7 +2,7 @@
 
 # ReLiEF fingerprints
 
-Receptor Ligand surfacE Feature (ReLiEF) fingerprints for encoding molecular structure and physicochemical properties.  Essentially, ReLiEF fingerprints are generated from a molecular surface that is colored by a particular property, such as partial charge.  From the surface and color, fingerprints are generated.  These are physicochemical 3D-based fingerprints and can be used in a variety of applications such as similarity clustering, machine learning, and pharmacophore generation.  There are two types of ReLiEF fingerprints, segmentation-based and distribution-based.
+Receptor Ligand surfacE Feature (ReLiEF) fingerprints for encoding molecular structure and physicochemical properties.  Essentially, ReLiEF fingerprints are generated from a molecular surface that is colored by a particular property, such as partial charge.  These are physicochemical 3D-based fingerprints and can be used in a variety of applications such as similarity clustering, machine learning, and pharmacophore generation.  There are two types of ReLiEF fingerprints, segmentation-based and distribution-based.
 
 ### Segmentation-based ReLiEF fingerprints
 
