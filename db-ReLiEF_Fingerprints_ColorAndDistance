@@ -1,0 +1,233 @@
+################################################
+# Copyright 2023 Benjamin M. Samudio
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Ben Samudio, May 2023
+# Towards Alleviating Suffering
+###############################################
+import re
+import math
+import statistics
+import os
+import matplotlib
+
+path = "/Users/benjaminsamudio/ReLiEF_Fingerprints_DistributionBased_PDE-10/" #<--------------------------------- This should be set to the path of the working directory which contains the surface dot *.wrl files
+os.chdir(path)
+
+rgb_distribution_array = []
+distance_distribution_array = []
+rgb_match_count = 0
+longest_fingerprint_length = 0
+
+
+pdb_activity_dictionary = {'5seeA': 8.46,	'5sepA': 6.99,	'5sdvA': 8.9,	'5sfoA': 8.55,	'5sf4A': 8.98,	'5sfvA': 7.12,	'5se2A': 7.03,	'5seiA': 6.88,	'5sf8A': 9.32,	'5sfcA': 5.66,	'5sdzA': 7.71,	'5sfbA': 8.68,	'5sf9A': 8.38,	'5sehA': 8.69,	'5se3A': 7.35,	'5sfwA': 8.31,	'5sf5A': 8.47,	'5sdwA': 9.44,	'5sfnA': 7.8,	'5seqA': 7.43,	'5sedA': 8.67,	'5sfpA': 7.43,	'5se4A': 8.87,	'5seoA': 7.06,	'5sezA': 7.99,	'5secA': 9.48,	'5se8A': 7.67,	'5sevA': 7.09,	'5sfiA': 7.55,	'5sf2A': 7.71,	'5sf3A': 8.6,	'5sfhA': 7.37,	'5sewA': 9.08,	'5se9A': 8.14,	'5sebA': 7.21,	'5sfdA': 7.5,	'5senA': 9.16,	'5se5A': 8.24,	'5sfqA': 6.56,	'5sfgA': 8.22,	'5sexA': 7.45,	'5semA': 8.75,	'5se6A': 7,	'5sfrA': 8.21,	'5sf0A': 8.08,	'5sfkA': 8.19,	'5setA': 8.49,	'5seaA': 9.06,	'5seuA': 6.27,	'5sfjA': 7.93,	'5sf1A': 9.01,	'5sfsA': 7.94,	'5se7A': 9.56,	'5selA': 8.1,	'5seyA': 7.33,	'5sffA': 8.99,	'5sf6A': 8.56,	'5sfmA': 9.06,	'5serA': 9.07,	'5segA': 8.17,	'5sfxA': 7.93,	'5sdxA': 5.5,	'5sfaA': 6.82,	'5sekA': 8.29,	'5se0A': 8.65,	'5sftA': 8.55,	'5sfuA': 7.73,	'5se1A': 7.5,	'5sejA': 7.2,	'5sdyA': 7.9,	'5sfyA': 6.65,	'5sefA': 7.87,	'5sesA': 8.54,	'5sflA': 8.51,	'5sduA': 7.33,	'5sf7A': 8.14,}
+
+
+
+############################################################################################### Section 1 of 3: Create the RGB binner
+# The RGB values from the *.wrl file are fractions of one.
+rgb_distribution_row_count = 0
+rgb_temp_array = []
+
+for rgb_red_value in range(0,52): # <-------------The maximum RGB value is 255.  Here the values are binned in increments of 5-RGB units.
+        for rgb_green_value in range(0,52):
+                for rgb_blue_value in range(0,52):
+                        rgb_distribution_row_count += 1
+                        rgb_temp_array = []
+                        rgb_bin_string = ""
+                        rgb_red_fraction = 5 * rgb_red_value / 255
+                        rgb_green_fraction = 5 * rgb_green_value / 255
+                        rgb_blue_fraction = 5 * rgb_blue_value / 255
+                        rgb_red_top = 5 * (rgb_red_value + 1) / 255
+                        rgb_green_top = 5 * (rgb_green_value + 1) / 255
+                        rgb_blue_top = 5 * (rgb_blue_value + 1) / 255
+                        rgb_middle_hex_code = matplotlib.colors.to_hex([rgb_red_fraction, rgb_green_fraction, rgb_blue_fraction])
+                        rgb_bin_string = "PC&" + rgb_middle_hex_code
+                        rgb_temp_array = [rgb_distribution_row_count,rgb_red_fraction,rgb_green_fraction,rgb_blue_fraction,rgb_bin_string,0,rgb_red_top,rgb_green_top,rgb_blue_top]
+ #                      print(rgb_temp_array)
+                        rgb_distribution_array.append(rgb_temp_array)
+
+rgb_distribution_array_size = len(rgb_distribution_array)
+
+# This creates a distance bin of 0 to 50 angstroms max at 0.1 angstrom increments, for 500 bins.
+distance_increment = 0.1
+distance_maximum = 50
+number_distance_bins = distance_maximum / distance_increment
+# print(number_distance_bins)
+for distance_bin_value in range(0,int(number_distance_bins)):
+        distance_temp_array = []
+        distance_bin_bottom = round(distance_bin_value * distance_increment,1)
+        distance_bin_top = round((distance_bin_value * distance_increment) + distance_increment,1)
+        distance_temp_array.append(distance_bin_value) #<------------------------------------------------- Element 0: bin index
+        distance_temp_array.append(distance_bin_bottom) #<------------------------------------------------ Element 1: bin bottom
+        distance_temp_array.append(distance_bin_top) #<--------------------------------------------------- Element 2: bin top
+        distance_bin_string = ""
+        distance_bin_string = "DS&" + str(distance_bin_bottom) + "to" + str(distance_bin_top)
+        distance_temp_array.append(distance_bin_string) #<------------------------------------------------ Element 3: bin string
+        initial_distance_value = 0
+        distance_temp_array.append(initial_distance_value) #<------------------------------------------------------------------ Element 4: bin instance
+#       print(distance_temp_array)
+        distance_distribution_array.append(distance_temp_array)
+
+distance_distribution_array_size = len(distance_distribution_array)
+
+
+fingerprints_filename = path + "ReLieF_Fingerprints_DistributionBased.csv"
+header_string = "Name" + "," + "Color" + "," + "Fingerprints" + ","
+with open(fingerprints_filename,'w') as file_object:
+    header_string = header_string + "\n"
+    file_object.write(header_string)
+
+
+
+
+for file in os.listdir(): # START OF ITERATIONS
+        if file.endswith(".wrl"):
+                print(f"Currently processing this file: {file}")
+                temp_filename_tuple = ()
+                temp_filename_tuple = os.path.splitext(file)
+                output_filename_base = temp_filename_tuple[0]
+                dot_surface_file = ""
+                dot_surface_file = file
+                fingerprint_length = 0
+                fingerprint_length_with_delimiter = 0
+                fingerprint_output_string = ""
+#               fingerprint_output_string = output_filename_base + "," + "FILL_ME" + ","
+                fingerprint_output_string = output_filename_base + "," + str(pdb_activity_dictionary[output_filename_base]) + ","
+                pairwise_distance_array = []
+                ############################################################################################### Section 2 of 3: Extract the coordinates and colors of each surface dot.  Convert the colors to an alphabetic code.  Collect all values into: surface_all_dot_values.
+                # Example string for coordinates from *.wrl file: translation 2.819419 0.448916 -1.255814
+                # Example string for colors from *.wrl file: material Material { diffuseColor 0.0000 0.0624 1.0000
+
+                with open(dot_surface_file) as file_object:
+                        for wrl_file_row in file_object: #<-------------------------------------------------- Open a *.wrl file.  This file should only cotain spheres (dots), their translations, and their colors
+                                surface_dot_coordinates = []
+                                surface_dot_colors = []
+                                surface_dot_start = []
+                                surface_dot_end = []
+                                surface_dot_coordinates = re.search(r"translation\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)",wrl_file_row) #<---------------------- Extract dot translation coordinates
+                                surface_dot_colors = re.search(r"diffuseColor\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)",wrl_file_row) #<-------------------------- Extract dot color
+                                surface_dot_start = re.search(r"Transform",wrl_file_row) #<--------------------------------------------------------------------------- Extract the indicator of the START of a new dot block in the *.wrl file
+                                surface_dot_end = re.search(r"shininess",wrl_file_row) #<----------------------------------------------------------------------------- Extract the indicator of the END of a new dot block in the *.wrl file
+                                if surface_dot_start: #<------------------------------------------- Initiate arrays upon finding a new dot block
+                                        new_dot_flag = 1
+                                        surface_single_dot_values = []
+                                if surface_dot_end:
+                                        new_dot_flag = 0
+                                if surface_dot_coordinates and new_dot_flag == 1: #<-------------------------------------- These are the dot coordinates (translations) from the *.wrl file.  They're only used for calculating distances.
+                                        dot_x_coordinate = (float(surface_dot_coordinates.group(1)))
+                                        dot_y_coordinate = (float(surface_dot_coordinates.group(2)))
+                                        dot_z_coordinate = (float(surface_dot_coordinates.group(3)))
+                                        temp_coordinates_array = []
+                                        temp_coordinates_array.append(dot_x_coordinate)
+                                        temp_coordinates_array.append(dot_y_coordinate)
+                                        temp_coordinates_array.append(dot_z_coordinate)
+                                        pairwise_distance_array.append(temp_coordinates_array)
+                                #       print(pairwise_distance_array)
+                                if surface_dot_colors and new_dot_flag == 1: #<-------------------------------------------- These are the RGB values (fractions of 255) from the *.wrl file.
+                                        first_color_value = 0
+                                        second_color_value = 0
+                                        third_color_value = 0
+                                        first_color_value = float(surface_dot_colors.group(1))
+                                        second_color_value = float(surface_dot_colors.group(2))
+                                        third_color_value = float(surface_dot_colors.group(3))
+                #                       print(first_color_value,second_color_value,third_color_value)
+                                        for rgb_bin_count in range(0,rgb_distribution_array_size):
+                                                if first_color_value == 1 and second_color_value == 1 and third_color_value == 1:
+                                                        rgb_distribution_array[rgb_bin_count][5] += 1
+                                                        rgb_match_count += 1
+                #                                       print(rgb_match_count, rgb_distribution_array[rgb_bin_count])
+                                                        break
+                                                elif first_color_value >= rgb_distribution_array[rgb_bin_count][1] and second_color_value >= rgb_distribution_array[rgb_bin_count][2] and third_color_value >= rgb_distribution_array[rgb_bin_count][3] and first_color_value < rgb_distribution_array[rgb_bin_count][6] and second_color_value < rgb_distribution_array[rgb_bin_count][7] and third_color_value < rgb_distribution_array[rgb_bin_count][8]:
+                                                        rgb_match_count += 1
+                 #                                      print(rgb_match_count,rgb_distribution_array[rgb_bin_count])
+                                                        rgb_distribution_array[rgb_bin_count][5] += 1
+                                                        break
+                ###############################################################################################
+                pairwise_distance_array_size = len(pairwise_distance_array)
+                for distance_outer_loop in range(0,pairwise_distance_array_size):
+                        for distance_inner_loop in range(distance_outer_loop + 1,pairwise_distance_array_size):
+                                dot_pairwise_distance = math.dist(pairwise_distance_array[distance_outer_loop],pairwise_distance_array[distance_inner_loop])
+                                for distance_bin_index in range(0,distance_distribution_array_size):
+                                        if dot_pairwise_distance >= distance_distribution_array[distance_bin_index][1] and dot_pairwise_distance < distance_distribution_array[distance_bin_index][2]:
+                                                distance_distribution_array[distance_bin_index][4] += 1
+                                                break
+                        #       print(distance_distribution_array[distance_bin_index])
+                ############################################################################################### Section 3 of 3: Create fingerprints
+                #                                                                   bin string
+                #                                  V----------------------------------------------------------------------------V
+                #                                 property         color bin       match instance           bit            space delimiter
+                #                                    V                 V                 V              V----------V             V
+                # Example output from this section: PC&#ffa000&1 PC&#ffa000&2 PC&#ffa000&3 PC&#ffa000&4 PC&#ffa000&5 PC&#ffa000&6
+                # For each color bin in rgb_distribution_array, the number of matches with dot colors (input RGB values) is tallied.  This tally is the "match/bin instance".
+                # The letters "PC" in the example output stand for "partial charge".  The text between the "&" symbols is the color hex code representing the color bin.
+                # The number after the last "&" symbol is the match instance.  For each color bin and each instance, a fingerprint "bit" is printed.
+                # The example above represents a "bit string" of all of the instances (six in total) of matches that occurred in the partial charge property distribition and color bin "#ffa000".
+                # All bit strings are concatenated together into a fingerprint representing a particular surface.
+
+                output_bin_string = ""
+                output_fingerprint_string = ""
+                output_fingerprint_bits = []
+                number_bins_matched = 0
+                fingerprint_length = 0
+                fingerprint_length_with_delimiter = 0
+
+                for rgb_bin_index in range(0,rgb_distribution_array_size):
+                #       output_bin_string = "%" + " " #<------------------------------ Uncomment this only if delimiters are desired between bin strings
+                        output_bin_string = ""
+                        if rgb_distribution_array[rgb_bin_index][5] != 0: #<---------- Ensure that at least one match was made between a dot color (input RGB values) and a color bin (rgb_distribution_array)
+                                rgb_bin_instance = 0 #<---------- This is the match instance count initiation
+                                for rgb_bit_index in range(0,rgb_distribution_array[rgb_bin_index][5]):
+                                        fingerprint_length += 1
+                                        rgb_bin_instance += 1 #<---------- This is the match instance count
+                                        output_bin_string = output_bin_string + rgb_distribution_array[rgb_bin_index][4] + "&" + str(rgb_bin_instance) + " "
+                                output_bin_string = output_bin_string + "% % % % " #<------------------------------ This adds a buffer to the end of each bin string.
+                #               print(output_bin_string) # <---------------------------- Prints bin strings, one per row.
+                                output_fingerprint_bits.append(output_bin_string)
+                        rgb_distribution_array[rgb_bin_index][5] = 0 #<------------------ Reset the match count in rgb_distribution_array
+                number_bins_matched = len(output_fingerprint_bits)
+                output_fingerprint_string = "".join(output_fingerprint_bits)
+                fingerprint_length_with_delimiter = fingerprint_length + number_bins_matched * 4#<-------------------------- The number_bins_matched is multiplied by 4 to account for buffers
+                if fingerprint_length_with_delimiter > longest_fingerprint_length:
+                        longest_fingerprint_length = fingerprint_length_with_delimiter
+ #              print(output_fingerprint_string)
+                fingerprint_output_string = fingerprint_output_string + output_fingerprint_string
+
+                for distance_bin_index in range(0, distance_distribution_array_size):
+                        #       output_bin_string = "%" + " " #<------------------------------ Uncomment this only if delimiters are desired between bin strings
+                        output_bin_string = ""
+                        if distance_distribution_array[distance_bin_index][4] != 0:  # <---------- Ensure that at least one match was made between a dot color (input RGB values) and a color bin (rgb_distribution_array)
+                                distance_bin_instance = 0  # <---------- This is the match instance count initiation
+                                for distance_bit_index in range(0, distance_distribution_array[distance_bin_index][4]):
+                                        fingerprint_length += 1
+                                        distance_bin_instance += 1  # <---------- This is the match instance count
+                                        output_bin_string = output_bin_string + distance_distribution_array[distance_bin_index][3] + "&" + str(distance_bin_instance) + " "
+                                output_bin_string = output_bin_string + "% % % % "  # <------------------------------ This adds a buffer to the end of each bin string.
+                                #               print(output_bin_string) # <---------------------------- Prints bin strings, one per row.
+                                output_fingerprint_bits.append(output_bin_string)
+                        distance_distribution_array[distance_bin_index][4] = 0  # <------------------ Reset the match count in rgb_distribution_array
+                number_bins_matched = len(output_fingerprint_bits)
+                output_fingerprint_string = "".join(output_fingerprint_bits)
+                fingerprint_length_with_delimiter = fingerprint_length + number_bins_matched * 4  # <-------------------------- The number_bins_matched is multiplied by 4 to account for buffers
+                if fingerprint_length_with_delimiter > longest_fingerprint_length:
+                        longest_fingerprint_length = fingerprint_length_with_delimiter
+                print(output_fingerprint_string)
+                fingerprint_output_string = fingerprint_output_string + output_fingerprint_string
+
+                with open(fingerprints_filename, 'a') as file_object:
+                        file_object.write(fingerprint_output_string)
+                        file_object.write("\n")
+                print(f"The number of color bins matched: {number_bins_matched}")
+                print(f"The fingerprint length is: {fingerprint_length_with_delimiter}")
+                print(f"The longest fingerprint length is: {longest_fingerprint_length}")
